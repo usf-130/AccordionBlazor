@@ -1,0 +1,56 @@
+﻿<div class="accordion-item">
+    <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#@(id)" aria-expanded="true" aria-controls="@(id)">
+            @Title
+        </button>
+    </h2>
+    <div id="@(id)" class="accordion-collapse collapse @(Show?"show":"")" data-bs-parent="#@(id)">
+        <div class="accordion-body">
+            @Content
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    public string? id { get; set; } = "tm-" + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8);
+
+    [Parameter] public string? Title { get; set; }
+
+    [Parameter] public RenderFragment? Content { get; set; }
+    [Parameter] public bool Show { get; set; }
+
+    [CascadingParameter]
+    public AccordionItem accordionItem { get; set; }
+
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? Attributes { get; set; }
+
+
+
+    //protected string GetAccordionItemId()
+    //{
+    //    return $"tm-accordion-item-{accordionId}";
+    //}
+
+
+    protected string GetAccordionCssClass()
+    {
+        return $"tm-accordion accordion {GetAccordionClassAttr()}";
+    }
+    protected string GetAccordionClassAttr()
+    {
+        if (Attributes != null && Attributes.TryGetValue("class", out var tmclass) && !string.IsNullOrEmpty(Convert.ToString(@tmclass)))
+        {
+            return $"{@tmclass}";
+        }
+
+        return UniqueID;
+    }
+    public string UniqueID { get; set; } = string.Empty;
+}

@@ -1,0 +1,44 @@
+﻿<div class="@(GetAccordionCssClass())" id="@(GetAccordionId())">
+    <CascadingValue Value="@this">@ChildContent</CascadingValue>
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    private string? ComponentId { get; set; }
+    private string? CssClass { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+
+    protected string GetAccordionId()
+    {
+        var accordionId = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8);
+        return $"tm-accordion-{accordionId}";
+    }
+
+
+    protected string GetAccordionCssClass()
+    {
+        return $"tm-accordion accordion {GetAccordionClassAttr()}";
+    }
+
+    protected string GetAccordionClassAttr()
+    {
+        if (Attributes != null && Attributes.TryGetValue("class", out var tmclass) && !string.IsNullOrEmpty(Convert.ToString(@tmclass)))
+        {
+            return $"{@tmclass}";
+        }
+
+        return UniqueID;
+    }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object> Attributes { get; set; }
+
+
+    public string UniqueID { get; set; }
+
+}
